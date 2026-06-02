@@ -6,7 +6,7 @@ from google.genai import types
 import streamlit as st
 
 load_dotenv()
-api_key = os.getenv("GEMINI_API_KEY")
+api_key = st.secrets["GEMINI_API_KEY"]
 
 MODEL_VERSION = "gemini-2.5-flash"
 client = genai.Client(api_key=api_key)
