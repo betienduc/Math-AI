@@ -2,7 +2,7 @@ pip>=24.0
 setuptools>=69.0.0
 wheel
 streamlit
-genai
+google-genai
 pandas
 numpy
 python-dotenv
