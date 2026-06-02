@@ -12,4 +12,7 @@ tensorflow
 openai
 google-generativeai
 IPython
-dotenv
+openai
+python-dotenv
+requests
+pillow
