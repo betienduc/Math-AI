@@ -304,6 +304,12 @@ def chatbot_ui():
         ]
     if "kb_tab" not in st.session_state:
         st.session_state.kb_tab = "Đại số"
+
+    # FIX 1: Xóa prompt TRƯỚC khi widget render (dùng flag)
+    if st.session_state.get("_clear_prompt"):
+        st.session_state.prompt_area = ""
+        st.session_state._clear_prompt = False
+
     if "prompt_area" not in st.session_state:
         st.session_state.prompt_area = ""
 
@@ -321,7 +327,6 @@ def chatbot_ui():
     # ── Row 1: Tab selector ──
     tab_names = list(KEYBOARD.keys())
     tab_cols = st.columns([1, 1, 1, 4])
-
     for i, tab in enumerate(tab_names):
         active = st.session_state.kb_tab == tab
         label = f"{tab}" if active else tab
@@ -334,12 +339,10 @@ def chatbot_ui():
                 st.session_state.kb_tab = tab
                 st.rerun()
 
-    # ── Row 2: Symbol buttons (uniform grid) ──
+    # ── Row 2: Symbol buttons ──
     symbols = KEYBOARD[st.session_state.kb_tab].copy()
-
     while len(symbols) < MAX_SYMBOLS:
         symbols.append(("", ""))
-
     rows_needed = len(symbols) // COLS_PER_ROW
     for row_i in range(rows_needed):
         row_syms = symbols[row_i * COLS_PER_ROW : (row_i + 1) * COLS_PER_ROW]
@@ -353,14 +356,13 @@ def chatbot_ui():
                         st.session_state.prompt_area += sym
                         st.rerun()
 
-    # ── Row 3: Textarea + Send + Top ──
+    # ── Row 3: Textarea + Send ──
     with st.form("chat_form"):
         prompt = st.text_area(
             "",
             key="prompt_area",
             height=72,
         )
-
         send = st.form_submit_button("⚡ Gửi")
 
     st.markdown("</div>", unsafe_allow_html=True)
@@ -372,18 +374,12 @@ def chatbot_ui():
             st.warning("Nhập đề bài trước nhé 😅")
             return
 
-        # Clear history, keep greeting
-        st.session_state.conversation_log = [
-            {"role": "assistant", "content": initial_bot_mess}
-        ]
-        st.session_state["prompt_area"] = ""
-        st.rerun()
-        with st.chat_message("user"):
-            st.markdown(current_prompt)
-        st.session_state.conversation_log.append(
+        # Thêm tin nhắn user vào lịch sử
+st.session_state.conversation_log.append(
             {"role": "user", "content": current_prompt}
         )
 
+        # Gọi API
         with st.spinner("Casio-chan đang đăm chiêu... 🧠"):
             try:
                 response = client.models.generate_content(
@@ -403,12 +399,13 @@ def chatbot_ui():
                 else:
                     bot_reply = f"😭 Đã xảy ra lỗi:\n\n`{err}`"
 
-        with st.chat_message("assistant"):
-            render_message(bot_reply)
+        # Thêm phản hồi bot vào lịch sử
         st.session_state.conversation_log.append(
             {"role": "assistant", "content": bot_reply}
         )
 
+        # FIX 2: Set flag xóa prompt, sau đó mới rerun
+        st.session_state._clear_prompt = True
         st.rerun()
 
 
