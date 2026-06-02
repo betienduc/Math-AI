@@ -375,7 +375,7 @@ def chatbot_ui():
             return
 
         # Thêm tin nhắn user vào lịch sử
-st.session_state.conversation_log.append(
+        st.session_state.conversation_log.append(
             {"role": "user", "content": current_prompt}
         )
 
