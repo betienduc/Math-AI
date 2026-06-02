@@ -12,3 +12,4 @@ tensorflow
 openai
 google-generativeai
 IPython
+dotenv
