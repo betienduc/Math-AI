@@ -41,7 +41,7 @@ h1 {
     font-weight: 800 !important;
     font-size: 1.9rem !important;
     color: #1a1a1a !important;
-    margin-bottom: 0 !important;
+    margin-bottom: 10px !important;
 }
 h5, h4, h3 { color: #444 !important; font-family: 'Syne', sans-serif !important; }
 
@@ -284,7 +284,7 @@ def render_message(message):
 
 
 initial_bot_mess = (
-    "Hí chào cậu, tớ là Casio-chan ⚡🧠\nCậu muốn giải bài gì? Tớ chuyên Toán - Tin nè!"
+    "Hí chào cậu, tớ là Casio-chan ⚡🧠\nCậu muốn giải bài gì? Tớ chuyên Toán nè!"
 )
 
 
